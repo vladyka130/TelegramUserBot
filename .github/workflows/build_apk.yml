@@ -3,8 +3,6 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
-    paths:
-      - 'telegram_user_bot_kivy/**'
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:  # Дозволяє запускати вручну
