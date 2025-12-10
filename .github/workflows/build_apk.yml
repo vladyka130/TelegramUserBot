@@ -1,0 +1,49 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'telegram_user_bot_kivy/**'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Дозволяє запускати вручну
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          git zip unzip openjdk-17-jdk python3-pip autoconf libtool \
+          pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
+          libtinfo5 cmake libffi-dev libssl-dev build-essential
+    
+    - name: Install Buildozer
+      run: |
+        pip3 install --user buildozer
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+    - name: Build APK
+      working-directory: ./telegram_user_bot_kivy
+      run: |
+        buildozer android debug
+    
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: telegram-user-bot-apk
+        path: telegram_user_bot_kivy/bin/*.apk
+        retention-days: 30
+

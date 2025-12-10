@@ -1,0 +1,1 @@
+видалити файл сесії %LOCALAPPDATA%\TelegramUserSender\my_account.session.

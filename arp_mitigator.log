@@ -1,0 +1,6 @@
+[2025-10-12 17:20:00] Using interface: Wi-Fi
+[2025-10-12 17:20:00] Starting sniff on iface: Wi-Fi, filter: arp
+[2025-10-12 17:20:58] Observed Who-Has: 10.27.64.26 asks who-has 10.27.64.27 (src-mac 78:d9:8d:30:56:b6)
+[2025-10-12 17:20:58] Sent ARP reply: 10.27.64.27 is-at 9a:83:c7:72:e0:39 -> to 10.27.64.26 (78:d9:8d:30:56:b6) on Wi-Fi
+[2025-10-12 17:24:41] Observed Who-Has: 10.27.64.26 asks who-has 10.27.64.27 (src-mac 78:d9:8d:30:56:b6)
+[2025-10-12 17:24:41] Sent ARP reply: 10.27.64.27 is-at 9a:83:c7:72:e0:39 -> to 10.27.64.26 (78:d9:8d:30:56:b6) on Wi-Fi
