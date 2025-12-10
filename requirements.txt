@@ -1,0 +1,5 @@
+# Залежності для десктопної версії (telegram_my_dpi.py)
+customtkinter>=5.2.0
+telethon>=1.28.0
+certifi
+

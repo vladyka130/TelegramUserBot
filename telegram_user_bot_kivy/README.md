@@ -118,9 +118,18 @@ requirements = python3,kivy,telethon,certifi,pyopenssl,cryptography
 5. Завантажте чати
 6. Налаштуйте розсилку
 
-## Детальна інструкція
+## Автоматична збірка через GitHub Actions
 
-Див. `BUILD_INSTRUCTIONS.md` для повного гайду.
+Найпростіший спосіб зібрати APK - через GitHub Actions. Див. `GITHUB_ACTIONS.md` для деталей.
+
+**Швидкий старт:**
+1. Створіть репозиторій на GitHub
+2. Зробіть `git push`
+3. Перейдіть в Actions → завантажте готовий APK
+
+## Десктопна версія
+
+Для запуску на Windows використовуйте `telegram_my_dpi.py` (CustomTkinter версія) з кореневої папки проекту.
 
 
 
