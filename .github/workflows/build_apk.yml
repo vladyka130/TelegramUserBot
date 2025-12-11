@@ -28,9 +28,9 @@ jobs:
           pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
           cmake libffi-dev libssl-dev build-essential
     
-    - name: Install Buildozer
+    - name: Install Buildozer and dependencies
       run: |
-        pip3 install --user buildozer
+        pip3 install --user buildozer Cython
         echo "$HOME/.local/bin" >> $GITHUB_PATH
     
     - name: Build APK
