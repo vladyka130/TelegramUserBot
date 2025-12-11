@@ -26,21 +26,40 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-    
     - name: Install system dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
           git zip unzip python3-pip autoconf libtool \
           pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
-          cmake libffi-dev libssl-dev build-essential
+          cmake libffi-dev libssl-dev build-essential wget
     
-    - name: Install Android SDK components
+    - name: Install Android SDK
       run: |
+        export ANDROID_HOME=$HOME/android-sdk
+        mkdir -p $ANDROID_HOME/cmdline-tools
+        cd $ANDROID_HOME/cmdline-tools
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        unzip -q commandlinetools-linux-11076708_latest.zip
+        rm commandlinetools-linux-11076708_latest.zip
+        mv cmdline-tools latest
+        
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
         yes | sdkmanager --licenses || true
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
+        
+        # Перевірка що aidl встановлений
+        ls -la $ANDROID_HOME/platform-tools/aidl || echo "aidl not found in platform-tools"
+        find $ANDROID_HOME -name "aidl" -type f || echo "aidl not found anywhere"
+        
+        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+    
+    - name: Verify aidl installation
+      run: |
+        which aidl || find $ANDROID_HOME -name "aidl" -type f
+        echo "ANDROID_HOME=$ANDROID_HOME"
+        echo "PATH=$PATH"
     
     - name: Install Buildozer and dependencies
       run: |
