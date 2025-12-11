@@ -20,14 +20,19 @@ jobs:
       with:
         python-version: '3.11'
     
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
     - name: Install system dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          git zip unzip openjdk-17-jdk python3-pip autoconf libtool \
+          git zip unzip python3-pip autoconf libtool \
           pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
-          cmake libffi-dev libssl-dev build-essential \
-          android-sdk-platform-tools || echo "android-sdk-platform-tools not in apt, Buildozer will handle it"
+          cmake libffi-dev libssl-dev build-essential
     
     - name: Install Buildozer and dependencies
       run: |
