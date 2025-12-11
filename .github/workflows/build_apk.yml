@@ -41,8 +41,10 @@ jobs:
     
     - name: Build APK
       working-directory: ./telegram_user_bot_kivy
+      env:
+        BUILDozer_WARN_ON_ROOT: 0
       run: |
-        buildozer android debug
+        buildozer android debug 2>&1 | tee buildozer.log || (cat buildozer.log && exit 1)
     
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
