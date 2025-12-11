@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # Дозволяє запускати вручну
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,71 +15,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-    
-    - name: Install system dependencies
+    - name: Build APK with Buildozer Docker
       run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          git zip unzip python3-pip autoconf libtool \
-          pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
-          cmake libffi-dev libssl-dev build-essential wget
-    
-    - name: Install Android SDK
-      run: |
-        export ANDROID_HOME=$HOME/android-sdk
-        mkdir -p $ANDROID_HOME/cmdline-tools
-        cd $ANDROID_HOME/cmdline-tools
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-        unzip -q commandlinetools-linux-11076708_latest.zip
-        rm commandlinetools-linux-11076708_latest.zip
-        mv cmdline-tools latest
+        docker run --rm \
+          -v ${{ github.workspace }}/telegram_user_bot_kivy:/app \
+          -v ${{ github.workspace }}/telegram_user_bot_kivy/.buildozer:/home/user/.buildozer \
+          -w /app \
+          kivy/buildozer:latest \
+          buildozer android debug
         
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-        
-        # Приймаємо всі ліцензії автоматично
-        yes | sdkmanager --licenses
-        
-        # Встановлюємо потрібні компоненти
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
-        
-        # Створюємо директорію для Buildozer SDK заздалегідь
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/platform-tools
-        
-        # Копіюємо build-tools в каталог Buildozer
-        cp -r $ANDROID_HOME/build-tools/34.0.0/* $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/ 2>/dev/null || true
-        cp -r $ANDROID_HOME/platform-tools/* $HOME/.buildozer/android/platform/android-sdk/platform-tools/ 2>/dev/null || true
-        
-        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
-    
-    - name: Install Buildozer and dependencies
-      run: |
-        pip3 install --user buildozer Cython
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-    
-    - name: Build APK
-      working-directory: ./telegram_user_bot_kivy
-      env:
-        BUILDozer_WARN_ON_ROOT: 0
-      run: |
-        buildozer android debug 2>&1 | tee buildozer.log || (cat buildozer.log && exit 1)
-    
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: telegram-user-bot-apk
         path: telegram_user_bot_kivy/bin/*.apk
         retention-days: 30
-
