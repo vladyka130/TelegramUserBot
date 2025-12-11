@@ -45,21 +45,24 @@ jobs:
         mv cmdline-tools latest
         
         export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-        yes | sdkmanager --licenses || true
+        
+        # Приймаємо всі ліцензії автоматично
+        yes | sdkmanager --licenses
+        
+        # Встановлюємо потрібні компоненти
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
         
-        # Перевірка що aidl встановлений
-        ls -la $ANDROID_HOME/platform-tools/aidl || echo "aidl not found in platform-tools"
-        find $ANDROID_HOME -name "aidl" -type f || echo "aidl not found anywhere"
+        # Створюємо директорію для Buildozer SDK заздалегідь
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/platform-tools
+        
+        # Копіюємо build-tools в каталог Buildozer
+        cp -r $ANDROID_HOME/build-tools/34.0.0/* $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/ 2>/dev/null || true
+        cp -r $ANDROID_HOME/platform-tools/* $HOME/.buildozer/android/platform/android-sdk/platform-tools/ 2>/dev/null || true
         
         echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-    
-    - name: Verify aidl installation
-      run: |
-        which aidl || find $ANDROID_HOME -name "aidl" -type f
-        echo "ANDROID_HOME=$ANDROID_HOME"
-        echo "PATH=$PATH"
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
     
     - name: Install Buildozer and dependencies
       run: |
