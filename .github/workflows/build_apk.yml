@@ -26,6 +26,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+    
     - name: Install system dependencies
       run: |
         sudo apt-get update
@@ -34,27 +37,15 @@ jobs:
           pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
           cmake libffi-dev libssl-dev build-essential
     
+    - name: Install Android SDK components
+      run: |
+        yes | sdkmanager --licenses || true
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
+    
     - name: Install Buildozer and dependencies
       run: |
         pip3 install --user buildozer Cython
         echo "$HOME/.local/bin" >> $GITHUB_PATH
-    
-    - name: Install Android SDK Command Line Tools
-      run: |
-        mkdir -p ~/android-sdk
-        cd ~/android-sdk
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-        unzip -q commandlinetools-linux-11076708_latest.zip
-        mkdir -p cmdline-tools
-        mv cmdline-tools latest
-        mv latest cmdline-tools
-        rm commandlinetools-linux-11076708_latest.zip
-        export ANDROID_HOME=~/android-sdk
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-        yes | sdkmanager --licenses || true
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
-        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
     
     - name: Build APK
       working-directory: ./telegram_user_bot_kivy
