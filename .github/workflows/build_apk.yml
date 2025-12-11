@@ -46,7 +46,7 @@ jobs:
           --arch=arm64-v8a \
           --bootstrap=sdl2 \
           --dist_name=telegramuserbot \
-          --android_api=33 \
+          --android_api=34 \
           --android_minapi=21
         p4a apk --private . \
           --package=org.telegram.telegramuserbot \
@@ -55,7 +55,7 @@ jobs:
           --bootstrap=sdl2 \
           --requirements=python3,kivy,telethon,certifi,pyopenssl \
           --arch=arm64-v8a \
-          --android_api=33 \
+          --android_api=34 \
           --main=main.py
         
     - name: Upload APK artifact
